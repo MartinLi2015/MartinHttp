@@ -135,7 +135,7 @@ public class OkHttpConfig {
                         public void log(String message) {
                             Log.e(TAG, message);
                         }
-                    }).setLevel(HttpLoggingInterceptor.Level.BODY).setLevel(HttpLoggingInterceptor.Level.HEADERS);
+                    }).setLevel(HttpLoggingInterceptor.Level.BODY);
             getOkBuilder().addInterceptor(HTTP_LOGGING_INTERCEPTOR);
         }
         return this;
