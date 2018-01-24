@@ -52,7 +52,6 @@ public abstract class CommonObserver<T> extends BaseObserver<T> {
         if (mProgressDialog != null) {
             mProgressDialog.dismiss();
         }
-        ToastUtils.showToast(errorMsg);
         onError(errorMsg);
     }
 

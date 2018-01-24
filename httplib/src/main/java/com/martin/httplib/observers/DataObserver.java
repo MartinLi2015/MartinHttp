@@ -60,7 +60,6 @@ public abstract class DataObserver<T> extends BaseDataObserver<T> {
     @Override
     public void doOnError(String errorMsg) {
         dismissLoading();
-        ToastUtils.showToast(errorMsg);
         onError(errorMsg);
     }
 

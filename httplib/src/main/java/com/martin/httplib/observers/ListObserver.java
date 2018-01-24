@@ -59,7 +59,6 @@ public abstract class ListObserver<T> extends BaseListObserver<T> {
     @Override
     public void doOnError(String errorMsg) {
         dismissLoading();
-        ToastUtils.showToast(errorMsg);
         onError(errorMsg);
     }
 
