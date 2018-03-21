@@ -2,8 +2,8 @@ package com.martin.martinhttp;
 
 import android.app.Application;
 
-
 import com.martin.httplib.OkHttpConfig;
+import com.martin.httplib.inteceptor.NetworkInterceptor;
 import com.martin.httplib.interfaces.IExtraParameter;
 import com.martin.httplib.utils.ContextUtis;
 
@@ -36,6 +36,7 @@ public class MyApp extends Application {
                         return null;
                     }
                 })
+                .addNetworkInteceptor(new NetworkInterceptor())
                 .setLog(BuildConfig.DEBUG)
                 .setSslSocketFactory();
     }

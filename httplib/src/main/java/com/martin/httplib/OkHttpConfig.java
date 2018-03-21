@@ -2,18 +2,25 @@ package com.martin.httplib;
 
 import android.util.Log;
 
+import com.martin.httplib.exception.ApiException;
 import com.martin.httplib.inteceptor.CommonParameterInterceptor;
 import com.martin.httplib.inteceptor.MoreBaseUrlInterceptor;
 import com.martin.httplib.inteceptor.TokenInterceptor;
 import com.martin.httplib.interfaces.IExtraParameter;
 import com.martin.httplib.interfaces.IMoreBaseUrl;
+import com.martin.httplib.interfaces.NetworkMonitor;
 import com.martin.httplib.utils.SSLUtils;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.ConnectException;
+import java.net.UnknownHostException;
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.annotations.NonNull;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 
 /**
@@ -85,6 +92,24 @@ public class OkHttpConfig {
      */
     public OkHttpConfig addTokenHeaderInterceptor(IExtraParameter iExtraParameter) {
         getOkBuilder().addInterceptor(new TokenInterceptor(iExtraParameter));
+        return this;
+    }
+
+    /**
+     * 添加网络拦截器
+     *
+     * @return
+     */
+    public OkHttpConfig addNetworkInteceptor(final NetworkMonitor networkMonitor) {
+        getOkBuilder().addNetworkInterceptor(new Interceptor() {
+            @Override
+            public Response intercept(Chain chain) throws IOException {
+                if(networkMonitor.isConnected()){
+                    return chain.proceed(chain.request());
+                }
+                throw new ConnectException();
+            }
+        });
         return this;
     }
 

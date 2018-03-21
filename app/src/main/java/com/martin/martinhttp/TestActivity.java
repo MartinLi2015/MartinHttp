@@ -3,13 +3,15 @@ package com.martin.martinhttp;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.TextView;
+import android.util.Log;
 
 import com.martin.httplib.RxMartinHttp;
-import com.martin.httplib.observers.CommonObserver;
-import com.martin.httplib.utils.Transformer;
+import com.martin.httplib.download.DownloadObserver;
+
+import java.io.File;
+
+import io.reactivex.disposables.Disposable;
 
 
 public class TestActivity extends AppCompatActivity {
@@ -21,28 +23,32 @@ public class TestActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test);
-        loading_dialog = new AlertDialog.Builder(this).setMessage("jiazaizhong").create();
-        final TextView tvTest = findViewById(R.id.tvTest);
-        loading_dialog = new AlertDialog.Builder(this).setMessage("loading...").create();
-        RxMartinHttp.createApi(ApiServices.class).getPlayingMovies("0df993c66c0c636e29ecbb5344252a4a")
-                .compose(Transformer.<Movies>switchObservableSchedulers(loading_dialog))
-                .subscribe(new CommonObserver<Movies>() {
+
+        String path = "http://dspbj.swochina.com/resource/ad/551517996780.mp4";
+        final String fileName = path.substring(path.lastIndexOf("/") + 1, path.length());
+        RxMartinHttp.downloadFile(path)
+                .subscribe(new DownloadObserver(fileName) {
                     @Override
-                    protected void onError(String errorMsg) {
+                    protected void getDisposable(Disposable d) {
 
                     }
 
                     @Override
-                    protected void onSuccess(Movies movies) {
-                        if (movies.getEntries() != null && movies.getEntries().size() > 0) {
+                    protected void onError(String errorMsg) {
+                        Log.e("aaaa", errorMsg);
+                    }
 
-                            for (Movies.EntriesBean beanean : movies.getEntries()) {
-                                tvTest.append(beanean.getTitle()+"   "+beanean.getStars()+"\n");
+                    @Override
+                    protected void onSuccess(long bytesRead, long contentLength, float progress, boolean done, String filePath) {
+                        Log.e("aaaa", "contentLength:" + contentLength + "\n bytesRead:" + bytesRead);
+                        if (done) {
+                            Log.e("aaaa", filePath);
+                            File file = new File(filePath);
+                            if (file.exists()) {
+                                Log.e("aaaa", "exist");
                             }
-
                         }
                     }
                 });
-
     }
 }
